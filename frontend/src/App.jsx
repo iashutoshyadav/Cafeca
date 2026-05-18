@@ -67,7 +67,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-cream selection:bg-beige selection:text-mocha">
         {/* Navbar */}
-        <nav className={`fixed top-0 left-0 w-full flex justify-between items-center z-50 transition-all duration-500 px-6 md:px-16 ${isNavScrolled ? 'py-4 glass-nav shadow-soft' : 'py-8 bg-transparent'}`}>
+        <nav className={`fixed top-0 left-0 w-full flex justify-between items-center transition-all duration-500 px-6 md:px-16 ${isMobileMenuOpen ? 'z-[10000]' : 'z-50'} ${isNavScrolled ? 'py-4 glass-nav shadow-soft' : 'py-8 bg-transparent'}`}>
           <Link to="/" className="font-heading text-3xl font-bold text-dark tracking-widest">CAFÉCA</Link>
           
           <ul className={`
@@ -77,7 +77,13 @@ function App() {
             transition-all duration-500
           `}>
             {isMobileMenuOpen && (
-              <button className="absolute top-8 right-8 text-mocha p-4" onClick={() => setIsMobileMenuOpen(false)}>
+              <button 
+                className="absolute top-6 right-6 text-mocha p-4 hover:scale-110 active:scale-95 transition-transform z-[10001] cursor-pointer" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMobileMenuOpen(false);
+                }}
+              >
                 <X size={32} />
               </button>
             )}
