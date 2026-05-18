@@ -183,7 +183,7 @@ const AIChatbot = () => {
 
   return (
     <>
-      <div className="fixed bottom-8 right-8 z-[9999] flex flex-col items-end">
+      <div className="fixed bottom-8 right-8 z-[9999] flex flex-col items-end pointer-events-none">
         <div className={`w-[350px] h-[500px] bg-cream border border-latte/10 rounded-[32px] mb-5 flex flex-col overflow-hidden shadow-soft-lg transition-all duration-500 origin-bottom-right ${isOpen ? 'opacity-100 scale-100 pointer-events-auto translate-y-0' : 'opacity-0 scale-90 pointer-events-none translate-y-10'}`}>
           
           {/* Header */}
@@ -300,7 +300,7 @@ const AIChatbot = () => {
         
         {/* Floating Bubble Icon */}
         <button 
-          className="w-16 h-16 rounded-2xl bg-mocha text-cream border-none flex items-center justify-center cursor-pointer shadow-soft-lg transition-all duration-500 hover:scale-110 hover:-rotate-6" 
+          className="w-16 h-16 rounded-2xl bg-mocha text-cream border-none flex items-center justify-center cursor-pointer shadow-soft-lg transition-all duration-500 hover:scale-110 hover:-rotate-6 pointer-events-auto" 
           onClick={() => setIsOpen(!isOpen)}
         >
           <ChatCircleDots weight="fill" size={32} />
