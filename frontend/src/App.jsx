@@ -67,67 +67,92 @@ function App() {
     <Router>
       <div className="min-h-screen bg-cream selection:bg-beige selection:text-mocha">
         {/* Navbar */}
-        <nav className={`fixed top-0 left-0 w-full flex justify-between items-center transition-all duration-500 px-6 md:px-16 ${isMobileMenuOpen ? 'z-[10000]' : 'z-50'} ${isNavScrolled ? 'py-4 glass-nav shadow-soft' : 'py-8 bg-transparent'}`}>
+        <nav className={`fixed top-0 left-0 w-full flex justify-between items-center transition-all duration-500 px-6 md:px-16 ${isMobileMenuOpen ? 'z-[10000]' : 'z-[1000]'} ${isNavScrolled ? 'py-4 glass-nav shadow-soft' : 'py-8 bg-transparent'}`}>
           <Link to="/" className="font-heading text-3xl font-bold text-dark tracking-widest">CAFÉCA</Link>
           
-          <ul className={`
-            ${isMobileMenuOpen 
-              ? 'fixed inset-0 bg-cream flex flex-col justify-center items-center gap-12 z-[100] animate-fade-in' 
-              : 'hidden md:flex md:flex-row gap-10 items-center'} 
-            transition-all duration-500
-          `}>
-            {isMobileMenuOpen && (
-              <button 
-                className="absolute top-6 right-6 text-mocha p-4 hover:scale-110 active:scale-95 transition-transform z-[10001] cursor-pointer" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsMobileMenuOpen(false);
-                }}
-              >
-                <X size={32} />
-              </button>
-            )}
-            
+          {/* Desktop Navigation Links (Hidden on Mobile) */}
+          <ul className="hidden md:flex md:flex-row gap-10 items-center">
             <li>
-              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+              <Link to="/" className="font-body text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
                 Home
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </li>
             <li>
-              <Link to="/menu" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+              <Link to="/menu" className="font-body text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
                 Menu
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </li>
             <li>
-              <Link to="/gallery" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+              <Link to="/gallery" className="font-body text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
                 Gallery
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </li>
             <li>
-              <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+              <Link to="/about" className="font-body text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
                 About
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </li>
             <li>
-              <Link 
-                to="/contact" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest"
-              >
+              <Link to="/contact" className="font-body text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
                 Contact
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </li>
           </ul>
 
-          <button className="md:hidden text-mocha p-2" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          <button className="md:hidden text-mocha p-2 cursor-pointer z-50" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             <List size={28} />
           </button>
         </nav>
+
+        {/* Mobile Navigation Drawer (Rendered outside <nav> to prevent parent padding/flex constraints) */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 bg-cream flex flex-col justify-center items-center gap-12 z-[100000] animate-fade-in">
+            <button 
+              className="absolute top-6 right-6 text-mocha p-4 hover:scale-110 active:scale-95 transition-transform z-[100001] cursor-pointer" 
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <X size={32} />
+            </button>
+            
+            <ul className="flex flex-col items-center gap-10">
+              <li>
+                <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-3xl font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+                  Home
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/menu" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-3xl font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+                  Menu
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/gallery" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-3xl font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+                  Gallery
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-3xl font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+                  About
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-3xl font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+                  Contact
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        )}
 
         {/* Main Content */}
         <main>

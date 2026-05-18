@@ -1,5 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Robot, Trash, X, Microphone, PaperPlaneRight, ChatCircleDots } from '@phosphor-icons/react';
+import { Robot, Trash, X, Microphone, PaperPlaneRight, ChatCircleDots, SpeakerHigh, SpeakerSlash } from '@phosphor-icons/react';
+import axios from 'axios';
+
+const SUGGESTED_PROMPTS = [
+  { text: "What is on your signature menu?", label: "📖 Menu" },
+  { text: "Where is the cafe located?", label: "📍 Address" },
+  { text: "What are your opening hours?", label: "🕒 Opening Hours" },
+  { text: "What is your contact information?", label: "📞 Contact Info" },
+  { text: "What are today's specials and recommendations?", label: "✨ Today's Specials" },
+  { text: "How can I book a table?", label: "📅 Book a Table" }
+];
 
 const AIChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,7 +18,12 @@ const AIChatbot = () => {
   ]);
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -16,14 +31,16 @@ const AIChatbot = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isTyping]);
 
   const handleClear = () => {
+    stopSpeaking();
     setMessages([
       { text: "Welcome to the Cafeca sanctuary! I'm your AI concierge. How can I help you find your perfect moment today?", sender: 'ai' }
     ]);
   };
 
+  // Local fallback response generator for offline or non-API use
   const getAIResponse = (query) => {
     const q = query.toLowerCase();
     if (q.includes('coffee') || q.includes('espresso') || q.includes('latte') || q.includes('cappuccino') || q.includes('brew')) {
@@ -60,22 +77,63 @@ const AIChatbot = () => {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
+      
+      // Query natural/premium voice options
+      const voices = window.speechSynthesis.getVoices();
+      const premiumVoice = voices.find(v => 
+        (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Karen')) && 
+        v.lang.startsWith('en')
+      ) || voices.find(v => v.lang.startsWith('en'));
+      
+      if (premiumVoice) utterance.voice = premiumVoice;
+      
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+      
       window.speechSynthesis.speak(utterance);
     }
   };
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const stopSpeaking = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+  };
+
+  const handleSendMessage = async (textToSend) => {
+    if (!textToSend.trim()) return;
     
-    const newMessages = [...messages, { text: input, sender: 'user' }];
+    const userMessage = textToSend.trim();
+    const newMessages = [...messages, { text: userMessage, sender: 'user' }];
     setMessages(newMessages);
     setInput('');
+    setIsTyping(true);
+    stopSpeaking();
 
-    setTimeout(() => {
-      const response = getAIResponse(input);
-      setMessages([...newMessages, { text: response, sender: 'ai' }]);
-      if (isListening) speakResponse(response);
-    }, 500);
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const response = await axios.post(`${apiUrl}/chat`, {
+        message: userMessage,
+        history: messages
+      });
+      
+      const replyText = response.data.reply;
+      setMessages([...newMessages, { text: replyText, sender: 'ai' }]);
+      if (!isMuted) speakResponse(replyText);
+    } catch (error) {
+      console.warn('API chat failed. Using high-quality offline rules fallback.', error);
+      const replyText = getAIResponse(userMessage);
+      setMessages([...newMessages, { text: replyText, sender: 'ai' }]);
+      if (!isMuted) speakResponse(replyText);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleSend = () => {
+    handleSendMessage(input);
   };
 
   const startVoiceRecognition = () => {
@@ -85,74 +143,162 @@ const AIChatbot = () => {
       return;
     }
 
+    // Stop speaking while recording voice
+    stopSpeaking();
+
     const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
     recognition.continuous = false;
     recognition.lang = 'en-US';
 
     setIsListening(true);
     setIsOpen(true);
+    setInput('Listening...');
     recognition.start();
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      const newMessages = [...messages, { text: transcript, sender: 'user' }];
-      setMessages(newMessages);
-      
-      setTimeout(() => {
-        const response = getAIResponse(transcript);
-        setMessages([...newMessages, { text: response, sender: 'ai' }]);
-        speakResponse(response);
-      }, 500);
+      setInput(transcript);
+      handleSendMessage(transcript);
     };
 
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event);
+      setIsListening(false);
+      setInput('');
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+      setInput(prev => prev === 'Listening...' ? '' : prev);
+    };
+  };
+
+  const stopVoiceRecognition = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+    setIsListening(false);
   };
 
   return (
     <>
       <div className="fixed bottom-8 right-8 z-[9999] flex flex-col items-end">
         <div className={`w-[350px] h-[500px] bg-cream border border-latte/10 rounded-[32px] mb-5 flex flex-col overflow-hidden shadow-soft-lg transition-all duration-500 origin-bottom-right ${isOpen ? 'opacity-100 scale-100 pointer-events-auto translate-y-0' : 'opacity-0 scale-90 pointer-events-none translate-y-10'}`}>
+          
+          {/* Header */}
           <div className="p-6 bg-off-white border-b border-latte/10 flex justify-between items-center">
             <div className="flex items-center gap-3 font-heading font-semibold text-dark">
-              <Robot weight="fill" size={28} className="text-mocha" />
+              <Robot weight="fill" size={28} className="text-mocha animate-pulse" />
               <span>Concierge</span>
+              {isSpeaking && (
+                <div className="flex items-end gap-[2px] ml-1 h-3">
+                  <span className="w-[3px] bg-caramel rounded-full animate-[pulse_0.6s_infinite] inline-block h-2" style={{ animationDelay: '0.1s' }} />
+                  <span className="w-[3px] bg-caramel rounded-full animate-[pulse_0.6s_infinite] inline-block h-3.5" style={{ animationDelay: '0.3s' }} />
+                  <span className="w-[3px] bg-caramel rounded-full animate-[pulse_0.6s_infinite] inline-block h-2.5" style={{ animationDelay: '0.5s' }} />
+                </div>
+              )}
             </div>
+            
             <div className="flex items-center gap-3">
+              <button 
+                onClick={() => {
+                  if (isSpeaking) stopSpeaking();
+                  setIsMuted(!isMuted);
+                }} 
+                title={isMuted ? "Unmute Voice Reading" : "Mute Voice Reading"} 
+                className={`transition-colors duration-300 ${isMuted ? 'text-mocha/30 hover:text-mocha' : 'text-caramel hover:text-mocha-dark'}`}
+              >
+                {isMuted ? <SpeakerSlash size={20} /> : <SpeakerHigh size={20} weight={isSpeaking ? "fill" : "regular"} />}
+              </button>
               <button onClick={handleClear} title="Clear Chat" className="text-mocha/40 hover:text-mocha transition-colors"><Trash size={20} /></button>
               <button onClick={() => setIsOpen(false)} className="text-mocha/40 hover:text-mocha transition-colors"><X size={20} /></button>
             </div>
           </div>
           
+          {/* Chat Container */}
           <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-5 bg-cream">
             {messages.map((msg, index) => (
-              <div key={index} className={`max-w-[85%] p-4 rounded-3xl text-sm leading-relaxed animate-fade-in-up break-words ${msg.sender === 'ai' ? 'bg-off-white self-start rounded-bl-none text-mocha shadow-sm' : 'bg-mocha text-cream self-end rounded-br-none font-medium shadow-soft'}`}>
+              <div 
+                key={index} 
+                className={`max-w-[85%] p-4 rounded-3xl text-sm leading-relaxed animate-fade-in-up break-words relative group ${
+                  msg.sender === 'ai' 
+                    ? 'bg-off-white self-start rounded-bl-none text-mocha shadow-sm' 
+                    : 'bg-mocha text-cream self-end rounded-br-none font-medium shadow-soft'
+                }`}
+              >
                 {msg.text}
               </div>
             ))}
+
+            {/* Suggested Prompt Chips */}
+            {messages.length === 1 && !isTyping && (
+              <div className="flex flex-col gap-3 animate-fade-in-up mt-1 max-w-[95%]">
+                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-mocha/50 ml-1">Suggested Questions</span>
+                <div className="flex flex-wrap gap-2">
+                  {SUGGESTED_PROMPTS.map((prompt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSendMessage(prompt.text)}
+                      className="px-3.5 py-2.5 bg-white hover:bg-mocha hover:text-cream border border-latte/15 rounded-2xl text-xs text-mocha/70 transition-all duration-300 shadow-sm hover:scale-105 active:scale-95 cursor-pointer text-left font-medium"
+                    >
+                      {prompt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Elegant Typing Indicator */}
+            {isTyping && (
+              <div className="max-w-[85%] p-4 rounded-3xl bg-off-white self-start rounded-bl-none shadow-sm flex items-center gap-1.5 animate-pulse">
+                <span className="w-2 h-2 bg-mocha/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-2 h-2 bg-mocha/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-2 h-2 bg-mocha/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+              </div>
+            )}
+            
             <div ref={messagesEndRef} />
           </div>
           
+          {/* Input Box */}
           <div className="p-6 border-t border-latte/10 flex gap-4 items-center bg-off-white">
             <button 
-              className={`text-mocha/40 transition-all hover:scale-110 hover:text-mocha ${isListening ? 'text-caramel animate-pulse' : ''}`} 
-              onClick={startVoiceRecognition}
-              title="Speak to AI"
+              className={`relative p-3 rounded-full transition-all duration-300 hover:scale-110 ${
+                isListening 
+                  ? 'bg-caramel/15 text-caramel scale-110 shadow-soft' 
+                  : 'text-mocha/40 hover:text-mocha'
+              }`} 
+              onClick={isListening ? stopVoiceRecognition : startVoiceRecognition}
+              title={isListening ? "Stop listening" : "Speak to AI"}
             >
-              <Microphone size={24} />
+              {isListening && (
+                <span className="absolute inset-0 rounded-full bg-caramel/20 animate-ping pointer-events-none" />
+              )}
+              <Microphone size={24} weight={isListening ? "fill" : "regular"} />
             </button>
+            
             <input 
               type="text" 
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Type a message..."
-              className="flex-1 px-5 py-3 bg-white border border-latte/10 rounded-2xl text-dark text-sm focus:outline-none focus:border-mocha/30"
+              disabled={isListening}
+              className="flex-1 px-5 py-3 bg-white border border-latte/10 rounded-2xl text-dark text-sm focus:outline-none focus:border-mocha/30 disabled:opacity-50"
             />
-            <button onClick={handleSend} className="text-mocha/40 hover:text-mocha transition-transform hover:scale-110"><PaperPlaneRight weight="fill" size={24} /></button>
+            
+            <button 
+              onClick={handleSend} 
+              disabled={!input.trim() || isListening} 
+              className="text-mocha/40 hover:text-mocha transition-transform hover:scale-110 disabled:opacity-30 disabled:pointer-events-none"
+            >
+              <PaperPlaneRight weight="fill" size={24} />
+            </button>
           </div>
         </div>
         
+        {/* Floating Bubble Icon */}
         <button 
           className="w-16 h-16 rounded-2xl bg-mocha text-cream border-none flex items-center justify-center cursor-pointer shadow-soft-lg transition-all duration-500 hover:scale-110 hover:-rotate-6" 
           onClick={() => setIsOpen(!isOpen)}
@@ -161,8 +307,15 @@ const AIChatbot = () => {
         </button>
       </div>
 
-      <div className={`fixed bottom-28 right-[400px] bg-mocha text-cream px-6 py-3 rounded-full font-medium opacity-0 pointer-events-none transition-all duration-500 z-[10000] shadow-soft-lg ${isListening ? 'opacity-100 -translate-y-2' : ''}`}>
-        Listening to your thoughts...
+      {/* Speech overlay banner */}
+      <div className={`fixed bottom-28 right-[400px] bg-mocha text-cream px-6 py-3 rounded-full font-medium opacity-0 pointer-events-none transition-all duration-500 z-[10000] shadow-soft-lg flex items-center gap-3 ${
+        isListening ? 'opacity-100 -translate-y-2 pointer-events-auto' : ''
+      }`}>
+        <span className="flex h-2.5 w-2.5 relative">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-caramel opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-caramel"></span>
+        </span>
+        <span>Listening to your thoughts...</span>
       </div>
     </>
   );

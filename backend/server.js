@@ -23,9 +23,11 @@ app.use(express.json());
 // Routes
 const reservationRoutes = require('./routes/reservationRoutes');
 const newsletterRoutes = require('./routes/newsletterRoutes');
+const chatRoutes = require('./routes/chatRoutes');
 
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.get('/', (req, res) => {
     res.send('Aura Cafe API is running...');
