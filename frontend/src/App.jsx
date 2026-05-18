@@ -89,19 +89,19 @@ function App() {
               </Link>
             </li>
             <li>
-              <Link to="/menu" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+              <Link to="/menu" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
                 Menu
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </li>
             <li>
-              <Link to="/gallery" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+              <Link to="/gallery" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
                 Gallery
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
               </Link>
             </li>
             <li>
-              <Link to="/about" target="_blank" rel="noopener noreferrer" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
+              <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest">
                 About
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-dark transition-all duration-300 group-hover:w-full"></span>
               </Link>
@@ -109,8 +109,6 @@ function App() {
             <li>
               <Link 
                 to="/contact" 
-                target="_blank" 
-                rel="noopener noreferrer" 
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="font-body text-2xl md:text-sm font-medium text-mocha hover:text-dark transition-all duration-300 relative group uppercase tracking-widest"
               >
