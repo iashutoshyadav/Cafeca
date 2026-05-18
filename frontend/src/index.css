@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-cream text-mocha font-body antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-semibold text-dark tracking-tight;
+  }
+
+  @keyframes loading {
+    0% { transform: translateX(-100%); }
+    50% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+  
+  @keyframes marquee {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+  
+  .marquee-container {
+    display: flex;
+    width: max-content;
+    animation: marquee 40s linear infinite;
+  }
+
+  .marquee-container:hover {
+    animation-play-state: paused;
+  }
+  
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  .btn-premium {
+    @apply inline-flex items-center justify-center px-8 py-4 rounded-full font-body font-medium transition-all duration-500 relative overflow-hidden;
+  }
+  
+  .btn-premium-primary {
+    @apply bg-mocha text-cream hover:bg-dark hover:shadow-soft-lg transform hover:-translate-y-1;
+  }
+  
+  .btn-premium-outline {
+    @apply border border-mocha text-mocha hover:bg-mocha hover:text-cream transform hover:-translate-y-1;
+  }
+
+  .glass-nav {
+    @apply bg-cream/70 backdrop-blur-xl border-b border-latte/10;
+  }
+
+  .section-spacing {
+    @apply py-16 md:py-20;
+  }
+
+  .premium-card {
+    @apply bg-white rounded-3xl p-8 shadow-soft transition-all duration-500 hover:shadow-soft-lg hover:-translate-y-2 border border-latte/5;
+  }
+
+  /* Custom Inputs for light theme */
+  input {
+    @apply w-full px-6 py-4 bg-off-white border border-latte/20 rounded-2xl text-dark font-body transition-all duration-300 focus:outline-none focus:border-caramel focus:ring-1 focus:ring-caramel/20;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-cream;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-latte/30 rounded-full border-4 border-cream hover:bg-latte/50;
+}
+
+/* Hide scrollbar for Chrome, Safari, Opera, Firefox and Edge */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
