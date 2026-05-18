@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Coffee, ArrowLeft } from '@phosphor-icons/react';
+import { Coffee, ArrowLeft, Star } from '@phosphor-icons/react';
 import { Link } from 'react-router-dom';
 
 const MenuPage = () => {
@@ -11,28 +11,28 @@ const MenuPage = () => {
 
   const menuData = {
     Coffee: [
-      { id: 1, name: 'Velvet Latte', price: '₹350', desc: 'Handcrafted espresso with steamed cream and caramel silk.', img: '/images/coffee_light.png' },
-      { id: 2, name: 'Artisan Brew', price: '₹320', desc: 'Ethically sourced beans, slow-steeped for 18 hours.', img: '/images/artisan_brew.png' },
-      { id: 3, name: 'Cloud Cappuccino', price: '₹380', desc: 'Extra-frothy milk over a double shot of smooth arabica.', img: '/images/cappuccino_froth.png' },
-      { id: 4, name: 'Mocha Mousse Latte', price: '₹450', desc: 'Rich chocolate ganache blended with velvet espresso.', img: '/images/mocha_mousse.png' },
-      { id: 5, name: 'Flat White Silk', price: '₹340', desc: 'The purist choice—silky microfoam over intense ristretto.', img: '/images/flat_white.png' },
+      { id: 1, name: 'Velvet Latte', price: '₹350', desc: 'Handcrafted espresso with steamed cream and caramel silk.', img: '/images/coffee_light.png', rating: '4.9', reviews: 142 },
+      { id: 2, name: 'Artisan Brew', price: '₹320', desc: 'Ethically sourced beans, slow-steeped for 18 hours.', img: '/images/artisan_brew.png', rating: '4.5', reviews: 98 },
+      { id: 3, name: 'Cloud Cappuccino', price: '₹380', desc: 'Extra-frothy milk over a double shot of smooth arabica.', img: '/images/cappuccino_froth.png', rating: '4.1', reviews: 115 },
+      { id: 4, name: 'Mocha Mousse Latte', price: '₹450', desc: 'Rich chocolate ganache blended with velvet espresso.', img: '/images/mocha_mousse.png', rating: '4.8', reviews: 86 },
+      { id: 5, name: 'Flat White Silk', price: '₹340', desc: 'The purist choice—silky microfoam over intense ristretto.', img: '/images/flat_white.png', rating: '4.3', reviews: 62 },
     ],
     Tea: [
-      { id: 6, name: 'Matcha Zen', price: '₹390', desc: 'Premium grade Japanese matcha with a hint of honey.', img: '/images/matcha_latte.png' },
-      { id: 7, name: 'Earl Grey Mist', price: '₹310', desc: 'Classic bergamot infusion with lavender notes.', img: '/images/earl_grey_mist.png' },
-      { id: 8, name: 'Rose Petal Oolong', price: '₹420', desc: 'Delicate floral notes with a smooth, earthy finish.', img: '/images/rose_oolong.png' },
-      { id: 9, name: 'Spiced Chai Bloom', price: '₹330', desc: 'House-made spice blend steeped in creamy oat milk.', img: '/images/spiced_chai.png' },
+      { id: 6, name: 'Matcha Zen', price: '₹390', desc: 'Premium grade Japanese matcha with a hint of honey.', img: '/images/matcha_latte.png', rating: '4.9', reviews: 130 },
+      { id: 7, name: 'Earl Grey Mist', price: '₹310', desc: 'Classic bergamot infusion with lavender notes.', img: '/images/earl_grey_mist.png', rating: '4.2', reviews: 74 },
+      { id: 8, name: 'Rose Petal Oolong', price: '₹420', desc: 'Delicate floral notes with a smooth, earthy finish.', img: '/images/rose_oolong.png', rating: '4.7', reviews: 53 },
+      { id: 9, name: 'Spiced Chai Bloom', price: '₹330', desc: 'House-made spice blend steeped in creamy oat milk.', img: '/images/spiced_chai.png', rating: '4.4', reviews: 109 },
     ],
     Snacks: [
-      { id: 10, name: 'Avocado Toast', price: '₹480', desc: 'Smashed avocado with sea salt and chili flakes on sourdough.', img: '/images/avocado_toast.png' },
-      { id: 11, name: 'Truffle Fries', price: '₹350', desc: 'Crispy fries tossed in truffle oil and parmesan.', img: '/images/truffle_fries.png' },
-      { id: 12, name: 'Artisan Hummus Plate', price: '₹460', desc: 'Warm pita, fresh veggies, and olive oil-infused hummus.', img: '/images/hummus_plate.png' },
+      { id: 10, name: 'Avocado Toast', price: '₹480', desc: 'Smashed avocado with sea salt and chili flakes on sourdough.', img: '/images/avocado_toast.png', rating: '4.8', reviews: 156 },
+      { id: 11, name: 'Truffle Fries', price: '₹350', desc: 'Crispy fries tossed in truffle oil and parmesan.', img: '/images/truffle_fries.png', rating: '4.1', reviews: 112 },
+      { id: 12, name: 'Artisan Hummus Plate', price: '₹460', desc: 'Warm pita, fresh veggies, and olive oil-infused hummus.', img: '/images/hummus_plate.png', rating: '4.5', reviews: 48 },
     ],
     Desserts: [
-      { id: 13, name: 'Golden Croissant', price: '₹300', desc: 'Flaky, butter-rich layers baked to honey-gold perfection.', img: '/images/golden_croissant.png' },
-      { id: 14, name: 'Berry Tart', price: '₹420', desc: 'Fresh seasonal berries on a vanilla bean custard base.', img: '/images/berry_tart.png' },
-      { id: 15, name: 'Salted Caramel Brownie', price: '₹380', desc: 'Fudgy dark chocolate with a swirl of sea salt caramel.', img: '/images/caramel_brownie.png' },
-      { id: 16, name: 'Lavender Lemon Cake', price: '₹440', desc: 'Light sponge with floral notes and zesty lemon glaze.', img: '/images/lavender_cake.png' },
+      { id: 13, name: 'Golden Croissant', price: '₹300', desc: 'Flaky, butter-rich layers baked to honey-gold perfection.', img: '/images/golden_croissant.png', rating: '4.9', reviews: 188 },
+      { id: 14, name: 'Berry Tart', price: '₹420', desc: 'Fresh seasonal berries on a vanilla bean custard base.', img: '/images/berry_tart.png', rating: '4.3', reviews: 94 },
+      { id: 15, name: 'Salted Caramel Brownie', price: '₹380', desc: 'Fudgy dark chocolate with a swirl of sea salt caramel.', img: '/images/caramel_brownie.png', rating: '4.6', reviews: 125 },
+      { id: 16, name: 'Lavender Lemon Cake', price: '₹440', desc: 'Light sponge with floral notes and zesty lemon glaze.', img: '/images/lavender_cake.png', rating: '4.2', reviews: 67 },
     ]
   };
 
@@ -75,7 +75,7 @@ const MenuPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
           {displayedItems.map((item, idx) => (
             <div key={item.id} className="group animate-fade-in-up" style={{ animationDelay: `${idx * 50}ms` }}>
-              <div className="relative h-80 overflow-hidden rounded-[3rem] mb-8 shadow-soft group-hover:shadow-soft-lg transition-all duration-700">
+              <div className="relative h-80 overflow-hidden rounded-[3rem] mb-6 shadow-soft group-hover:shadow-soft-lg transition-all duration-700">
                 <img 
                   src={item.img} 
                   loading="lazy"
@@ -85,6 +85,12 @@ const MenuPage = () => {
                 <div className="absolute top-0 right-0 bg-mocha/90 backdrop-blur-md px-6 py-3 rounded-bl-3xl shadow-sm">
                   <span className="text-sm font-bold text-cream">{item.price}</span>
                 </div>
+              </div>
+              {/* Rating below image */}
+              <div className="flex items-center gap-1.5 mb-2 px-1">
+                <Star size={14} weight="fill" className="text-caramel animate-pulse" />
+                <span className="text-xs font-bold text-dark">{item.rating}</span>
+                <span className="text-xs text-mocha/40">({item.reviews} reviews)</span>
               </div>
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-2xl font-heading tracking-tight">{item.name}</h3>

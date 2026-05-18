@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Star } from '@phosphor-icons/react';
 
 const SignatureSpecials = ({ isPreview = false }) => {
   const [activeCategory, setActiveCategory] = useState('Coffee');
 
   const menuItems = {
     Coffee: [
-      { id: 1, name: 'Velvet Latte', price: '₹350', desc: 'Handcrafted espresso with steamed cream and caramel silk.', img: '/images/coffee_light.png' },
-      { id: 2, name: 'Artisan Brew', price: '₹320', desc: 'Ethically sourced beans, slow-steeped for 18 hours.', img: '/images/artisan_brew.png' },
-      { id: 3, name: 'Cloud Cappuccino', price: '₹380', desc: 'Extra-frothy milk over a double shot of smooth arabica.', img: '/images/cappuccino_froth.png' },
+      { id: 1, name: 'Velvet Latte', price: '₹350', desc: 'Handcrafted espresso with steamed cream and caramel silk.', img: '/images/coffee_light.png', rating: '4.9', reviews: 142 },
+      { id: 2, name: 'Artisan Brew', price: '₹320', desc: 'Ethically sourced beans, slow-steeped for 18 hours.', img: '/images/artisan_brew.png', rating: '4.5', reviews: 98 },
+      { id: 3, name: 'Cloud Cappuccino', price: '₹380', desc: 'Extra-frothy milk over a double shot of smooth arabica.', img: '/images/cappuccino_froth.png', rating: '4.1', reviews: 115 },
     ],
     Tea: [
-      { id: 4, name: 'Matcha Zen', price: '₹390', desc: 'Premium grade Japanese matcha with a hint of honey.', img: '/images/matcha_latte.png' },
-      { id: 5, name: 'Earl Grey Mist', price: '₹310', desc: 'Classic bergamot infusion with lavender notes.', img: '/images/earl_grey_mist.png' },
+      { id: 4, name: 'Matcha Zen', price: '₹390', desc: 'Premium grade Japanese matcha with a hint of honey.', img: '/images/matcha_latte.png', rating: '4.8', reviews: 130 },
+      { id: 5, name: 'Earl Grey Mist', price: '₹310', desc: 'Classic bergamot infusion with lavender notes.', img: '/images/earl_grey_mist.png', rating: '4.3', reviews: 74 },
     ],
     Snacks: [
-      { id: 6, name: 'Avocado Toast', price: '₹480', desc: 'Smashed avocado with sea salt and chili flakes on sourdough.', img: '/images/avocado_toast.png' },
-      { id: 7, name: 'Truffle Fries', price: '₹350', desc: 'Crispy fries tossed in truffle oil and parmesan.', img: '/images/truffle_fries.png' },
+      { id: 6, name: 'Avocado Toast', price: '₹480', desc: 'Smashed avocado with sea salt and chili flakes on sourdough.', img: '/images/avocado_toast.png', rating: '4.7', reviews: 156 },
+      { id: 7, name: 'Truffle Fries', price: '₹350', desc: 'Crispy fries tossed in truffle oil and parmesan.', img: '/images/truffle_fries.png', rating: '4.2', reviews: 112 },
     ],
     Desserts: [
-      { id: 8, name: 'Golden Croissant', price: '₹300', desc: 'Flaky, butter-rich layers baked to honey-gold perfection.', img: '/images/golden_croissant.png' },
-      { id: 9, name: 'Berry Tart', price: '₹420', desc: 'Fresh seasonal berries on a vanilla bean custard base.', img: '/images/berry_tart.png' },
+      { id: 8, name: 'Golden Croissant', price: '₹300', desc: 'Flaky, butter-rich layers baked to honey-gold perfection.', img: '/images/golden_croissant.png', rating: '4.9', reviews: 188 },
+      { id: 9, name: 'Berry Tart', price: '₹420', desc: 'Fresh seasonal berries on a vanilla bean custard base.', img: '/images/berry_tart.png', rating: '4.4', reviews: 94 },
     ]
   };
 
@@ -67,7 +68,7 @@ const SignatureSpecials = ({ isPreview = false }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {itemsToShow.map((item, idx) => (
             <div key={item.id} className="premium-card group reveal active" style={{ transitionDelay: `${idx * 100}ms` }}>
-              <div className="relative h-72 overflow-hidden rounded-[2rem] mb-8">
+              <div className="relative h-72 overflow-hidden rounded-[2rem] mb-6">
                 <img 
                   src={item.img} 
                   loading="lazy"
@@ -77,6 +78,12 @@ const SignatureSpecials = ({ isPreview = false }) => {
                 <div className="absolute top-0 right-0 bg-mocha/90 backdrop-blur-md px-6 py-3 rounded-bl-3xl shadow-sm">
                   <span className="text-sm font-bold text-cream">{item.price}</span>
                 </div>
+              </div>
+              {/* Rating below image */}
+              <div className="flex items-center gap-1.5 mb-2 px-1">
+                <Star size={14} weight="fill" className="text-caramel animate-pulse" />
+                <span className="text-xs font-bold text-dark">{item.rating}</span>
+                <span className="text-xs text-mocha/40">({item.reviews} reviews)</span>
               </div>
               <h3 className="text-2xl mb-3 tracking-tight font-heading">{item.name}</h3>
               <p className="text-mocha/70 text-sm leading-relaxed mb-6 font-light">{item.desc}</p>
