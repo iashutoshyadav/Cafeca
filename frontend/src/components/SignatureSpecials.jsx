@@ -47,12 +47,12 @@ const SignatureSpecials = ({ isPreview = false }) => {
 
         {/* Category Tabs - Only show if NOT in preview mode */}
         {!isPreview && (
-          <div className="flex justify-center gap-3 mb-10 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex justify-start md:justify-center gap-3 mb-10 overflow-x-auto pb-4 scrollbar-hide px-4 md:px-0">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`px-6 py-2.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all duration-300 ${
+                className={`flex-shrink-0 px-6 py-2.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all duration-300 whitespace-nowrap cursor-pointer ${
                   activeCategory === category 
                   ? 'bg-mocha text-cream shadow-soft' 
                   : 'bg-white text-mocha/40 hover:text-mocha border border-latte/5'

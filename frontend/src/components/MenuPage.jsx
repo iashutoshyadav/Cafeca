@@ -42,7 +42,7 @@ const MenuPage = () => {
   const displayedItems = activeCategory === 'All' ? allItems : menuData[activeCategory];
 
   return (
-    <div className="min-h-screen bg-cream pt-24 pb-20 px-6 md:px-16 animate-fade-in">
+    <div className="min-h-screen bg-cream pt-32 pb-20 px-6 md:px-16 animate-fade-in">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-20 text-center relative">
@@ -55,12 +55,12 @@ const MenuPage = () => {
         </div>
 
         {/* Filter Tabs */}
-        <div className="flex justify-center gap-4 mb-20 overflow-x-auto pb-4 scrollbar-hide">
+        <div className="flex justify-start md:justify-center gap-4 mb-20 overflow-x-auto pb-4 scrollbar-hide px-4 md:px-0">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`px-10 py-4 rounded-full text-xs uppercase tracking-widest font-bold transition-all duration-500 whitespace-nowrap ${
+              className={`flex-shrink-0 px-10 py-4 rounded-full text-xs uppercase tracking-widest font-bold transition-all duration-500 whitespace-nowrap cursor-pointer ${
                 activeCategory === cat 
                 ? 'bg-mocha text-cream shadow-soft-lg scale-105' 
                 : 'bg-white text-mocha/40 hover:text-mocha border border-latte/10'
